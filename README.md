@@ -24,3 +24,5 @@ Just use vs code if you're on windows
 6. Download chrome driver `https://chromedriver.chromium.org/downloads`
 
 7. Copy `src/settings.example.py` to `src/settings.py` and update values
+
+8. To run `python src/main.py`
