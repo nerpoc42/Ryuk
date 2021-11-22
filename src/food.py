@@ -14,7 +14,6 @@ def is_correct_img(img):
 
 def get_higher_res_img(img):
     parent = img.parent
-    print(parent.name)
     while parent.name != 'a':
         parent = parent.parent
 
