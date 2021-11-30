@@ -8,7 +8,7 @@ from selenium.webdriver.firefox.options import Options
 from settings import settings
 
 url = "https://www.facebook.com/kubosvetaine"
-delay = 1
+delay = 5
 
 def is_correct_img(img):
 	return "p526x296" in img['src']
@@ -18,7 +18,7 @@ def get_higher_res_img(img):
     while parent.name != 'a':
         parent = parent.parent
 
-    link = "https://facebook.com"+parent['href']
+    link = parent['href']
 
     print(f"Querying {link}")
 
@@ -32,7 +32,7 @@ def get_higher_res_img(img):
 
     driver.get(link)
 
-    #time.sleep(1)
+    time.sleep(delay)
 
     html = driver.page_source
 
@@ -58,7 +58,7 @@ def get_food():
     # driver = webdriver.Chrome(os.getcwd()+'/chromedriver')
     driver.get(url)
 
-    #time.sleep(1)
+    time.sleep(delay)
 
     html = driver.page_source
 
@@ -76,7 +76,7 @@ def get_food():
     driver.close()
 
     for img in imgs:
-        if 'p480x480' in img['src']:
+        if img['src'].startswith('https://z-p3-scontent.fkun2-1.fna.fbcdn.net/v/t39.30808-6/p') and 'height' in img.attrs and 'width' in img.attrs:
             return get_higher_res_img(img)['src']
      
     # for img in imgs:
