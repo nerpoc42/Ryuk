@@ -7,6 +7,12 @@ from discord.ext import tasks
 from food import get_food
 
 from settings import settings
+from io import StringIO
+from contextlib import redirect_stdout
+import re
+import tempfile
+import time
+import subprocess
 
 intents = discord.Intents.all()
 
@@ -29,6 +35,37 @@ async def on_ready():
 	else:
 		print("No food channel given, skipping work", file=sys.stderr)
 
+def exec_code(orig, code, stream):
+	z = re.search('(```)([^\s]*)', orig)
+	if not z or not z.groups() or not z.groups()[1]:
+		lang = "python"
+	else:
+		lang = z.groups()[1].lower()
+	
+	if lang == "python" or lang == "py":
+		try:
+			exec(code)
+		except Exception as e:
+			print(e)
+	elif lang == "c":
+		with open('./comp_code/code.c', 'w') as fp:
+			fp.write(code)
+		val = subprocess.run('g++ -o ./comp_code/res_c ./comp_code/code.c; ./comp_code/res_c', shell=True, capture_output=True)
+		if val.stderr:
+			print(val.stderr.decode("utf-8"))
+		elif val.stdout:
+			print(val.stdout.decode("utf-8"))
+	elif lang == "cpp" or lang == "c++":
+		with open('./comp_code/code.cpp', 'w') as fp:
+			fp.write(code)
+		val = subprocess.run('g++ -o ./comp_code/res_cpp ./comp_code/code.cpp; ./comp_code/res_cpp', shell=True, capture_output=True)
+		if val.stderr:
+			print(val.stderr.decode("utf-8"))
+		elif val.stdout:
+			print(val.stdout.decode("utf-8"))
+		
+	else:
+		print("Nepažįstu šitos kalbos")
 
 @client.event
 async def on_message(message):
@@ -36,6 +73,19 @@ async def on_message(message):
 		return
 
 	content = message.content.lower()
+
+	if message.content.startswith('$'):
+		await message.channel.send('No')
+		# text = re.sub('```[^\s]*', '', message.content)[1:].lstrip()
+		
+		# stream = StringIO()
+		# with redirect_stdout(stream):
+		# 	exec_code(message.content, text, stream)
+			
+		# res = stream.getvalue()
+		# if res:
+		# 	await message.channel.send(content=res)
+		return
 
 	if 'maist' in content:
 		await message.channel.trigger_typing()
@@ -60,6 +110,7 @@ async def on_message(message):
 			print(f"Served new food menu: {message.id}")
 		except discord.Forbidden as e:
 			print(e, file=sys.stderr)
+		return
 	
 
 @tasks.loop(hours=1)
