@@ -149,3 +149,5 @@ chromedriver.exe
 # ----------------------------------
 # Settings (ignore only global settings file)
 src/settings.py 
+
+food.txt
