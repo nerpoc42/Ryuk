@@ -2,7 +2,6 @@
 Univerity-student oriented (lithuanian) discord bot
 
 # Features
-- Artificial intelligence trained to respond to hello in lithuanian
 - Obtains food menu from a cafe
 
 # How to install
